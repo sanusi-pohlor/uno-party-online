@@ -1,7 +1,9 @@
 (() => {
   'use strict';
 
-  const socket = io();
+  const socket = io({
+    transports: ['websocket']
+  });
 
   const els = {
     viewHome: document.getElementById('view-home'),

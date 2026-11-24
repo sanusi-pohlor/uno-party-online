@@ -355,6 +355,10 @@ function handleLeave(socket, immediate) {
   }, 45000);
 }
 
-server.listen(PORT, () => {
-  console.log(`UNO Party Online listening on port ${PORT}`);
-});
+if (require.main === module) {
+  server.listen(PORT, () => {
+    console.log(`UNO Party Online listening on port ${PORT}`);
+  });
+}
+
+module.exports = server;
