@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>UNO Party Online — เกมการ์ดเล่นหลายคนผ่านเว็บ</title>
+  <meta name="description" content="เล่นเกมการ์ด UNO ออนไลน์กับเพื่อน 2–8 คน ผ่าน Room Code รองรับมือถือและคอมพิวเตอร์ พร้อมบอท AI การ์ดพิเศษ +2/+4 ย้อนทิศ ข้ามตา และปุ่มตะโกน UNO!" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div id="app" class="app-shell">
+
+    <!-- ==================== LANDING VIEW ==================== -->
+    <main id="view-home" class="view view-home active">
+      <div class="home-stage">
+        <div class="hero-cards" aria-hidden="true">
+          <div class="card card-red hero-c1">
+            <span class="card-corner tl">+2</span>
+            <div class="card-oval"><span class="card-center">+2</span></div>
+            <span class="card-corner br">+2</span>
+          </div>
+          <div class="card card-yellow hero-c2">
+            <span class="card-corner tl">7</span>
+            <div class="card-oval"><span class="card-center">7</span></div>
+            <span class="card-corner br">7</span>
+          </div>
+          <div class="card card-blue hero-c3">
+            <span class="card-corner tl">⇄</span>
+            <div class="card-oval"><span class="card-center">⇄</span></div>
+            <span class="card-corner br">⇄</span>
+          </div>
+          <div class="card card-wild hero-c4">
+            <span class="card-corner tl">+4</span>
+            <div class="card-oval wild-oval"><span class="card-center">+4</span></div>
+            <span class="card-corner br">+4</span>
+          </div>
+        </div>
+
+        <header class="brand-header">
+          <h1 class="brand-title">UNO PARTY</h1>
+          <p class="brand-sub">โต๊ะการ์ดออนไลน์ เล่นด้วยกัน 2–8 คน ผ่านรหัสห้อง</p>
+        </header>
+
+        <section class="entry-panel" aria-label="เข้าห้องเกม">
+          <div class="field-group">
+            <label for="input-player-name" class="field-label">ชื่อผู้เล่นของคุณ</label>
+            <input
+              id="input-player-name"
+              type="text"
+              class="text-input"
+              maxlength="18"
+              placeholder="เช่น ต้นกล้า, มินต์..."
+              autocomplete="nickname"
+            />
+          </div>
+
+          <div class="entry-actions">
+            <button id="btn-create-room" class="btn btn-primary btn-lg" type="button">
+              สร้างห้องใหม่
+            </button>
+
+            <div class="divider-or"><span>หรือเข้าร่วมด้วยรหัสห้อง</span></div>
+
+            <div class="join-row">
+              <input
+                id="input-room-code"
+                type="text"
+                class="text-input code-input"
+                maxlength="6"
+                placeholder="รหัส 4 ตัว"
+                autocomplete="off"
+              />
+              <button id="btn-join-room" class="btn btn-secondary" type="button">
+                เข้าห้อง
+              </button>
+            </div>
+          </div>
+
+          <p id="home-error" class="inline-error" role="alert" hidden></p>
+        </section>
+
+        <footer class="home-hints">
+          <span>รองรับ 2–8 คน</span>
+          <span class="dot">•</span>
+          <span>เพิ่มบอท AI ได้</span>
+          <span class="dot">•</span>
+          <span>เล่นได้ทั้งมือถือและคอม</span>
+        </footer>
+      </div>
+    </main>
+
+    <!-- ==================== LOBBY VIEW ==================== -->
+    <section id="view-lobby" class="view view-lobby" aria-label="ห้องล็อบบี้">
+      <header class="top-bar">
+        <div class="top-bar-left">
+          <span class="brand-mini">UNO PARTY</span>
+          <span class="room-pill" id="lobby-room-pill">ห้อง ----</span>
+        </div>
+        <div class="top-bar-right">
+          <button id="btn-lobby-sound" class="icon-btn" type="button" title="เปิด/ปิดเสียง">🔊</button>
+          <button id="btn-lobby-leave" class="btn btn-ghost btn-sm" type="button">ออกจากห้อง</button>
+        </div>
+      </header>
+
+      <div class="lobby-grid">
+        <div class="lobby-main">
+          <div class="room-code-banner">
+            <div>
+              <div class="label-muted">รหัสห้องสำหรับชวนเพื่อน</div>
+              <div id="lobby-code-big" class="room-code-big">----</div>
+            </div>
+            <div class="copy-group">
+              <button id="btn-copy-code" class="btn btn-secondary btn-sm" type="button">คัดลอกรหัส</button>
+              <button id="btn-copy-link" class="btn btn-primary btn-sm" type="button">คัดลอกลิงก์ชวน</button>
+            </div>
+          </div>
+
+          <div class="panel-section">
+            <div class="section-head">
+              <h2>ผู้เล่นในห้อง (<span id="lobby-player-count">0</span>/8)</h2>
+              <button id="btn-add-bot" class="btn btn-secondary btn-sm" type="button" hidden>
+                + เพิ่มบอท AI
+              </button>
+            </div>
+            <ul id="lobby-player-list" class="player-list"></ul>
+          </div>
+
+          <div class="panel-section rules-section">
+            <div class="section-head">
+              <h2>กติกาของห้อง</h2>
+              <span id="rules-host-hint" class="label-muted">หัวหน้าห้องปรับได้</span>
+            </div>
+            <label class="toggle-row">
+              <div>
+                <div class="toggle-title">ต่อการ์ด +2 / +4 สะสมได้ (Stacking)</div>
+                <div class="toggle-desc">ลง +2 ทับ +2 หรือ +4 ทับ +2/+4 เพื่อส่งต่อให้คนถัดไปจั่วสะสม</div>
+              </div>
+              <input id="toggle-stack-draw" type="checkbox" class="switch-input" checked />
+            </label>
+          </div>
+
+          <div class="lobby-footer-cta">
+            <button id="btn-start-game" class="btn btn-primary btn-lg btn-full" type="button" hidden>
+              เริ่มแจกการ์ด!
+            </button>
+            <p id="lobby-wait-msg" class="wait-msg" hidden>รอหัวหน้าห้องกดเริ่มเกม...</p>
+          </div>
+        </div>
+
+        <aside class="lobby-chat-panel" aria-label="แชตในล็อบบี้">
+          <div class="section-head">
+            <h2>แชตในห้อง</h2>
+          </div>
+          <div id="lobby-chat-log" class="chat-log"></div>
+          <form id="lobby-chat-form" class="chat-form">
+            <input id="lobby-chat-input" type="text" class="text-input" maxlength="120" placeholder="พิมพ์ข้อความคุยกัน..." />
+            <button type="submit" class="btn btn-secondary btn-sm">ส่ง</button>
+          </form>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ==================== GAME TABLE VIEW ==================== -->
+    <section id="view-game" class="view view-game" aria-label="โต๊ะเกม UNO">
+      <header class="top-bar game-top-bar">
+        <div class="top-bar-left">
+          <span class="room-pill" id="game-room-pill">ห้อง ----</span>
+          <span class="meta-chip" id="game-round-chip">รอบที่ 1</span>
+          <span class="meta-chip" id="game-dir-chip">↻ ตามเข็ม</span>
+        </div>
+        <div class="top-bar-right">
+          <button id="btn-game-sound" class="icon-btn" type="button" title="เปิด/ปิดเสียง">🔊</button>
+          <button id="btn-toggle-chat" class="icon-btn" type="button" title="แชตในห้อง">
+            💬<span id="chat-unread-dot" class="unread-dot" hidden></span>
+          </button>
+          <button id="btn-game-leave" class="btn btn-ghost btn-sm" type="button">ออก</button>
+        </div>
+      </header>
+
+      <!-- Opponents Seat Strip -->
+      <div id="opponents-row" class="opponents-row" aria-label="ผู้เล่นคนอื่น"></div>
+
+      <!-- Center Table Felt Arena -->
+      <div class="table-center">
+        <div id="emote-layer" class="emote-layer" aria-hidden="true"></div>
+
+        <div id="event-banner" class="event-banner" role="status" aria-live="polite">
+          กำลังเตรียมโต๊ะ...
+        </div>
+
+        <div class="piles-stage">
+          <!-- Draw Pile -->
+          <div class="pile-slot">
+            <button id="btn-draw-pile" class="draw-pile-btn" type="button" aria-label="จั่วการ์ด">
+              <div class="card card-back pile-shadow-2"></div>
+              <div class="card card-back pile-shadow-1"></div>
+              <div class="card card-back pile-top">
+                <div class="card-oval back-oval"><span class="back-logo">UNO</span></div>
+              </div>
+              <span id="pending-draw-badge" class="pending-badge" hidden>+2</span>
+            </button>
+            <div class="pile-caption">
+              กองจั่ว (<span id="draw-pile-count">0</span>)
+            </div>
+          </div>
+
+          <!-- Active Color & Discard Pile -->
+          <div class="pile-slot discard-slot">
+            <div id="active-color-ring" class="active-color-ring color-red">
+              <div id="discard-card-mount" class="discard-mount"></div>
+            </div>
+            <div class="pile-caption">
+              สีปัจจุบัน: <strong id="active-color-label">แดง</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Player Controls + Hand -->
+      <div class="player-dock">
+        <div class="dock-toolbar">
+          <div class="turn-indicator" id="turn-indicator">รอตาของคุณ...</div>
+
+          <div class="dock-actions">
+            <button id="btn-pass-turn" class="btn btn-secondary btn-sm" type="button" hidden>
+              ผ่านตา
+            </button>
+            <button id="btn-shout-uno" class="btn btn-uno" type="button" disabled>
+              UNO!
+            </button>
+          </div>
+        </div>
+
+        <div class="emote-bar" aria-label="ส่งอีโมจิ">
+          <button class="emote-btn" data-emoji="😂" type="button">😂</button>
+          <button class="emote-btn" data-emoji="🔥" type="button">🔥</button>
+          <button class="emote-btn" data-emoji="😱" type="button">😱</button>
+          <button class="emote-btn" data-emoji="👏" type="button">👏</button>
+          <button class="emote-btn" data-emoji="😈" type="button">😈</button>
+          <button class="emote-btn" data-emoji="😭" type="button">😭</button>
+        </div>
+
+        <div id="player-hand" class="player-hand" aria-label="การ์ดในมือคุณ"></div>
+      </div>
+
+      <!-- Slide-over Chat Drawer during Game -->
+      <aside id="game-chat-drawer" class="chat-drawer" aria-label="แชตระหว่างเล่น" hidden>
+        <div class="chat-drawer-head">
+          <h3>แชตในห้อง</h3>
+          <button id="btn-close-chat" class="icon-btn" type="button">✕</button>
+        </div>
+        <div id="game-chat-log" class="chat-log"></div>
+        <form id="game-chat-form" class="chat-form">
+          <input id="game-chat-input" type="text" class="text-input" maxlength="120" placeholder="พิมพ์ข้อความ..." />
+          <button type="submit" class="btn btn-primary btn-sm">ส่ง</button>
+        </form>
+      </aside>
+    </section>
+
+    <!-- ==================== WILD COLOR MODAL ==================== -->
+    <div id="modal-wild" class="modal-backdrop" hidden>
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="wild-title">
+        <h3 id="wild-title" class="modal-title">เลือกสีที่ต้องการเปลี่ยน</h3>
+        <div class="color-picker-grid">
+          <button class="color-pick-btn pick-red" data-color="red" type="button">แดง</button>
+          <button class="color-pick-btn pick-blue" data-color="blue" type="button">น้ำเงิน</button>
+          <button class="color-pick-btn pick-green" data-color="green" type="button">เขียว</button>
+          <button class="color-pick-btn pick-yellow" data-color="yellow" type="button">เหลือง</button>
+        </div>
+        <button id="btn-cancel-wild" class="btn btn-ghost btn-sm" type="button">ยกเลิก</button>
+      </div>
+    </div>
+
+    <!-- ==================== ROUND WINNER MODAL ==================== -->
+    <div id="modal-winner" class="modal-backdrop" hidden>
+      <div class="modal-card modal-winner-card" role="dialog" aria-modal="true" aria-labelledby="winner-title">
+        <div class="winner-trophy">🏆</div>
+        <h2 id="winner-title" class="modal-title">ผู้ชนะรอบนี้!</h2>
+        <p id="winner-subtitle" class="winner-subtitle"></p>
+
+        <table class="scoreboard-table">
+          <thead>
+            <tr>
+              <th>ผู้เล่น</th>
+              <th>การ์ดคงเหลือ</th>
+              <th>คะแนนสะสม</th>
+            </tr>
+          </thead>
+          <tbody id="scoreboard-body"></tbody>
+        </table>
+
+        <div id="winner-host-actions" class="winner-actions" hidden>
+          <button id="btn-rematch" class="btn btn-primary btn-lg" type="button">เล่นรอบถัดไป</button>
+          <button id="btn-back-lobby" class="btn btn-secondary" type="button">กลับหน้าล็อบบี้</button>
+        </div>
+        <p id="winner-guest-wait" class="wait-msg" hidden>รอหัวหน้าห้องเริ่มรอบถัดไป...</p>
+      </div>
+    </div>
+
+    <!-- Floating Toast -->
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/sound.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>
